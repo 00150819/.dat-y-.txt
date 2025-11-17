@@ -1,0 +1,127 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+using namespace std;
+
+struct Producto {
+    char nombre[30];
+    int codigo;
+    float precio;
+};
+
+// Prototipos (modularización)
+void registrarProducto();
+void listarProductos();
+void buscarProducto();
+
+int main() {
+    int opcion;
+
+    do {
+        cout << "\n--- MENU ---" << endl;
+        cout << "1. Registrar producto" << endl;
+        cout << "2. Listar productos" << endl;
+        cout << "3. Buscar producto por nombre" << endl;
+        cout << "4. Salir" << endl;
+        cout << "Opcion: ";
+        cin >> opcion;
+
+        switch(opcion) {
+            case 1: registrarProducto(); break;
+            case 2: listarProductos(); break;
+            case 3: buscarProducto(); break;
+            case 4: cout << "Saliendo..." << endl; break;
+            default: cout << "Opcion invalida." << endl;
+        }
+
+    } while (opcion != 4);
+
+    return 0;
+}
+
+
+// -----------------------------------------------
+// REGISTRAR PRODUCTO
+// -----------------------------------------------
+void registrarProducto() {
+    Producto p;
+
+    cout << "Ingrese nombre del producto: ";
+    cin >> p.nombre;
+
+    cout << "Ingrese codigo: ";
+    cin >> p.codigo;
+
+    cout << "Ingrese precio: ";
+    cin >> p.precio;
+
+    ofstream archivo("productos.txt", ios::app);
+
+    archivo << p.nombre << " " << p.codigo << " " << p.precio << endl;
+
+    archivo.close();
+
+    cout << "Producto registrado correctamente." << endl;
+}
+
+
+// -----------------------------------------------
+// LISTAR PRODUCTOS (leer archivo)
+// -----------------------------------------------
+void listarProductos() {
+    ifstream archivo("productos.txt");
+
+    if (!archivo) {
+        cout << "No existe el archivo o esta vacio." << endl;
+        return;
+    }
+
+    char nombre[30];
+    int codigo;
+    float precio;
+
+    cout << "\n--- LISTA DE PRODUCTOS ---" << endl;
+
+    while (archivo >> nombre >> codigo >> precio) {
+        cout << "Nombre: " << nombre 
+             << "   Codigo: " << codigo 
+             << "   Precio: $" << precio << endl;
+    }
+
+    archivo.close();
+}
+
+
+// -----------------------------------------------
+// BUSCAR PRODUCTO POR NOMBRE
+// -----------------------------------------------
+void buscarProducto() {
+    char buscado[30];
+    cout << "Ingrese el nombre a buscar: ";
+    cin >> buscado;
+
+    ifstream archivo("productos.txt");
+
+    char nombre[30];
+    int codigo;
+    float precio;
+
+    bool encontrado = false;
+
+    while (archivo >> nombre >> codigo >> precio) {
+        if (strcmp(nombre, buscado) == 0) {
+            cout << "\nProducto encontrado:" << endl;
+            cout << "Nombre: " << nombre << endl;
+            cout << "Codigo: " << codigo << endl;
+            cout << "Precio: $" << precio << endl;
+            encontrado = true;
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        cout << "Producto NO encontrado." << endl;
+    }
+
+    archivo.close();
+}
