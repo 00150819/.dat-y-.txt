@@ -1,0 +1,15 @@
+git init
+
+# Conectar con repositorio remoto
+git remote add origin https://github.com/usuario/repositorio.git
+
+# Primera subida
+git push -u origin main
+git init
+git status
+git add .
+git commit -m "Mensaje del commit"
+git remote add origin https://github.com/tu_usuario/tu_repositorio.git
+git remote -v
+git push -u origin main
+git push -u origin master
