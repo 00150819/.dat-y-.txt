@@ -1,0 +1,105 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+using namespace std;
+
+struct Alumno {
+    char nombre[30];
+    int edad;
+    float promedio;
+};
+
+void registrarAlumno() {
+    Alumno a;
+
+    cout << "Ingrese nombre: ";
+    cin >> a.nombre;
+
+    cout << "Ingrese edad: ";
+    cin >> a.edad;
+
+    cout << "Ingrese promedio: ";
+    cin >> a.promedio;
+
+    // Guardar en archivo de texto
+    ofstream txt("alumnos.txt", ios::app);
+    txt << a.nombre << " " << a.edad << " " << a.promedio << endl;
+    txt.close();
+
+    // Guardar en archivo binario
+    ofstream bin("alumnos.dat", ios::binary | ios::app);
+    bin.write((char*)&a, sizeof(a));
+    bin.close();
+
+    cout << "Alumno registrado correctamente." << endl;
+}
+
+void mostrarAlumnosTexto() {
+    ifstream txt("alumnos.txt");
+
+    char nombre[30];
+    int edad;
+    float promedio;
+
+    cout << "\n--- Lista de alumnos (desde archivo de texto) ---" << endl;
+
+    while (txt >> nombre >> edad >> promedio) {
+        cout << "Nombre: " << nombre 
+             << "  Edad: " << edad 
+             << "  Promedio: " << promedio << endl;
+    }
+
+    txt.close();
+}
+
+void buscarAlumnoBinario() {
+    char buscado[30];
+    cout << "Ingrese el nombre a buscar: ";
+    cin >> buscado;
+
+    ifstream bin("alumnos.dat", ios::binary);
+
+    Alumno a;
+    bool encontrado = false;
+
+    while (bin.read((char*)&a, sizeof(a))) {
+        if (strcmp(a.nombre, buscado) == 0) {
+            cout << "\nAlumno encontrado:" << endl;
+            cout << "Nombre: " << a.nombre << endl;
+            cout << "Edad: " << a.edad << endl;
+            cout << "Promedio: " << a.promedio << endl;
+            encontrado = true;
+            break;
+        }
+    }
+
+    bin.close();
+
+    if (!encontrado) {
+        cout << "Alumno NO encontrado." << endl;
+    }
+}
+
+int main() {
+    int opcion;
+
+    do {
+        cout << "\n--- MENU ---" << endl;
+        cout << "1. Registrar alumno" << endl;
+        cout << "2. Mostrar todos los alumnos (texto)" << endl;
+        cout << "3. Buscar alumno por nombre (binario)" << endl;
+        cout << "4. Salir" << endl;
+        cout << "Opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1: registrarAlumno(); break;
+            case 2: mostrarAlumnosTexto(); break;
+            case 3: buscarAlumnoBinario(); break;
+            case 4: cout << "Saliendo..." << endl; break;
+            default: cout << "Opcion invalida." << endl; break;
+        }
+    } while (opcion != 4);
+
+    return 0;
+}
